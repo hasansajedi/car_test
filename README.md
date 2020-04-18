@@ -30,8 +30,6 @@ Urls list:
 >
 > Logout= 127.0.0.1:8000/logout
 >
-> Login= 127.0.0.1:8000/login
->
 > Configure= 127.0.0.1:8000/configure
 >
 > report= 127.0.0.1:8000/report
