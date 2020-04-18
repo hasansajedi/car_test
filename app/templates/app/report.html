@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% load to_dash %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="card mb-1">
+                <div class="card-header">
+                    Available orders
+                </div>
+                <div class="card-body text-center">
+                    <div class="row">
+                        <div class="col-sm-12 text-left">
+                            Available orders: <p class="badge badge-secondary">{{ report_orders_count }}</p>
+                        </div>
+                        <div class="w-100"></div>
+                        <div class="col-sm-12 text-left">
+                            Average price: <p class="badge badge-secondary">{{ average_price }} €</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mb-1">
+                <div class="card-header">
+                    Out of F.D sold cars:
+                </div>
+                <div class="card-body text-center">
+                    <div class="row">
+                        <div class="col-sm-12 text-left">
+                            Out of F.D sold cars: <p class="badge badge-secondary">{{ without_firday_discount }}</p>
+                        </div>
+                        <div class="w-100"></div>
+                        <div class="col-sm-12 text-left">
+                            Out of F.D avg price: <p
+                                class="badge badge-secondary">{{ without_firday_discount_average_price }} €</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mb-1">
+                <div class="card-header">
+                    In F.D sold cars
+                </div>
+                <div class="card-body text-center">
+                    <div class="row">
+                        <div class="col-sm-12 text-left">
+                            In F.D sold cars: <p class="badge badge-secondary">{{ firday_discount_count }}</p>
+                        </div>
+                        <div class="w-100"></div>
+                        <div class="col-sm-12 text-left">
+                            In F.D avg price: <p class="badge badge-secondary">{{ firday_discount_average_price }} €</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mb-1" data-toggle="tooltip" data-placement="top"
+                 title="The percentage distribution of each of the options that have been configured.">
+                <div class="card-header">
+                    Percentage distribution
+                </div>
+                <div class="card-body text-center">
+                    {% for item in percentage_distribution %}
+                        <div class="w-100 mb-1">
+                            <div class="row border border-secondary rounded">
+                                <div class="col-sm-4"><h3 class="h-100 align-middle text-info"
+                                                          style="line-height:250%">{{ item.0 }}</h3></div>
+                                <div class="col-sm-8 text-left ">
+                                    Battery: {{ item.1 }}<br>
+                                    Wheel: {{ item.2 }}<br>
+                                    Tire: {{ item.3 }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-9">
+            <table class="table table-light">
+                <thead class="thead-light">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Fullname</th>
+                    <th scope="col">Battery</th>
+                    <th scope="col">Wheel</th>
+                    <th scope="col">Tire</th>
+                    <th scope="col">Total cost</th>
+                    <th scope="col">Discount</th>
+                    <th scope="col">Created</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for row in data %}
+                    <tr>
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td>{{ row.fullname }}</td>
+                        <td>{{ row.battery.name }}</td>
+                        <td>{{ row.wheel.name }}</td>
+                        <td>{{ row.tier.name }}</td>
+                        <td>{{ row.total_cost }}</td>
+                        <td>{{ row.discount }}</td>
+                        <td>{{ row.created_on }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <br>
+            {% include "app/pagination.html" with page=data %}
+        </div>
+    </div>
+    <br>
+{% endblock %}
