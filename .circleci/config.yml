@@ -5,7 +5,7 @@ jobs:
     docker:
       - image: circleci/python:3.8
 
-    working_directory: ~/repo
+    working_directory: ~/app
 
     steps:
       # Step 1: obtain repo from GitHub
@@ -20,10 +20,27 @@ jobs:
             pip install -r requirements.txt
       # Step 3: run linter and tests
       - run:
-            name: Add python project to path
-            command: 'echo "$(realpath .)/app" > venv/lib/python3.8/site-packages/app.pth'
+          name: Add python project to path
+          command: 'echo "$(realpath .)/app" > venv/lib/python3.8/site-packages/app.pth'
       - run:
           name: run tests
           command: |
             . venv/bin/activate
             python manage.py test
+  deploy-job:
+    docker:
+      # Important to note that we're using 2.7 here. This is because at the time of
+      # writing, Fabric doesn't work with Python 3
+      - image: circleci/python:3.8
+    working_directory: ~/app
+    steps:
+      - checkout
+      - run:
+          name: Deploy via Fabric
+          command: |
+            sudo pip install fabric==1.14.0
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              fab -f .circleci/deploy.py -i ~/.ssh/id_rsa production deploy
+            else
+              fab -f .circleci/deploy.py -i ~/.ssh/id_rsa staging deploy
+            fi
