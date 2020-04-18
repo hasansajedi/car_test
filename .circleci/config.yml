@@ -23,5 +23,5 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            pipenv run python manage.py migrate
-            pipenv run python manage.py test
+            python manage.py migrate
+            python manage.py test
