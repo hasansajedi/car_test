@@ -44,3 +44,21 @@ jobs:
             else
               fab -f .circleci/deploy.py -i ~/.ssh/id_rsa staging deploy
             fi
+  workflows:
+    version: 2
+    build-deploy:
+      jobs:
+        - build-job:
+            filters:
+              branches:
+                only:
+                  - develop
+                  - master
+        - deploy-job:
+            requires:
+              - build-job
+            filters:
+              branches:
+                only:
+                  - develop
+                  - master
