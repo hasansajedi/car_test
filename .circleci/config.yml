@@ -26,7 +26,7 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            python manage.py test
+            python3 manage.py test
   deploy-job:
     docker:
       - image: circleci/python:3.8
