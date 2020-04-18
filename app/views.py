@@ -50,10 +50,7 @@ def configure(request):
                                                           'discount': discount,
                                                           })
             except Exception as e:
-                if hasattr(e, 'message'):
-                    print(e.message)
-                else:
-                    print(e)
+                print(e)
         else:
             err = form.errors
             return render(request, 'app/order.html', {'form': form, 'error': err})
@@ -64,15 +61,22 @@ def configure(request):
                                                   'form': form})
 
 
+@login_required
 def check_available_wheel_for_battery(request, battery_id):
     if request.is_ajax():
         battery = Battery.objects.get(id=battery_id)
-        wheels = Wheel.objects.all()
-        qs = Wheel_condition.objects.filter(battery_id=battery)
-        if qs.count() == 0:
-            qs = Wheel_condition.objects.values('wheel_id')
-            wheels = wheels.exclude(id__in=qs)
+        lst = []
+        wheel = Wheel.objects.all()
+        for item in wheel:
+            qs = Wheel_condition.objects.filter(wheel_id=item.id)
+            if qs.count() == 0:
+                lst.append(item.id)
+            else:
+                for x in qs:
+                    if x.battery_id.id == battery.id:
+                        lst.append(item.id)
 
+        wheels = Wheel.objects.filter(id__in=lst)
         # Create array
         json_res = []
 
@@ -85,16 +89,22 @@ def check_available_wheel_for_battery(request, battery_id):
         return HttpResponse(json.dumps(json_res), content_type='application/json')
 
 
+@login_required
 def check_available_tire_for_wheel(request, wheel_id):
     if request.is_ajax():
         wheel = Wheel.objects.get(id=wheel_id)
-
+        lst = []
         tires = Tire.objects.all()
-        qs = Tier_condition.objects.filter(wheel_id=wheel)
-        if qs.count() == 0:
-            qs = Tier_condition.objects.values('wheel_id')
-            tires = tires.exclude(id__in=qs)
+        for item in tires:
+            qs = Tier_condition.objects.filter(tier_id=item.id)
+            if qs.count() == 0:
+                lst.append(item.id)
+            else:
+                for x in qs:
+                    if x.wheel_id.id == wheel.id:
+                        lst.append(item.id)
 
+        tires = Tire.objects.filter(id__in=lst)
         # Create array
         json_res = []
 
@@ -107,6 +117,7 @@ def check_available_tire_for_wheel(request, wheel_id):
         return HttpResponse(json.dumps(json_res), content_type='application/json')
 
 
+@login_required
 def checkout(request, battery_id, wheel_id, tire_id):
     if request.is_ajax():
         car_base_price = settings.CAR_BASE_PRICE
@@ -192,7 +203,8 @@ def login_user(request):
         if user is not None:
             if user.is_active:
                 login(request, user)
-                return HttpResponseRedirect(settings.LOGIN_REDIRECT_URL)
+                print('ssssss')
+                return HttpResponseRedirect('/configure')
     context = {'foo': 'bar'}
     return render(request, 'registration/login.html', context)
 
