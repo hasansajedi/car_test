@@ -2,11 +2,13 @@
 
 This application uploaded on [Github](https://github.com/hasansajedi/car_test) and test automated with CircleCI.
 
+To create a car with configuration I used Builder Pattern.
+All of options you want in tech document is developed. All of detailed report comes in '/report'.
 ## Installation
 To build, test and deploy application please, run bash.sh file in root direcory:
 
 ```bash
-> ./bash.sh
+> ./script.sh
 ```
 or
 ```bash
@@ -17,9 +19,9 @@ or
 > source .envrc
 > python ./manage.py migrate
 > python ./manage.py test
-> pipenv run python manage.py runserver
-
+> pipenv run python manage.py runserver --insecure
 ```
+or, You can use CircleCI to build, test and deploy the project. The config file is in '.circleci' folder.
 
 ## Usage
 
