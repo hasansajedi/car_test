@@ -10,6 +10,7 @@ from .views import (
     logout_user)
 
 urlpatterns = [
+    path(r'', configure, name='configure'),
     path(r'report/', report, name='report'),
     path(r'configure/', configure, name='configure'),
     path(r'check_available_wheel_for_battery/<int:battery_id>', check_available_wheel_for_battery,

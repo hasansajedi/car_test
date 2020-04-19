@@ -1,4 +1,6 @@
 from django.test import TestCase
+
+from app.builder import DataLabCarBuilder, CarBuilder
 from app.models import Battery, Wheel, Tire, OrderModel
 
 
@@ -53,3 +55,22 @@ class OrderModelTestCase(TestCase):
     def test_order_can_submit(self):
         order_1 = OrderModel.objects.get(mobile="15237931461")
         self.assertEqual(order_1.fullname, "Hasan Sajedi")
+
+
+class CarTestCase(TestCase):
+    def setUp(self):
+        self.battery = Battery.objects.create(name="battery_1", amount=10.0)
+        self.wheel = Wheel.objects.create(name="wheel_1", amount=10.0)
+        self.tire = Tire.objects.create(name="tire_1", amount=10.0)
+
+    def test_car_has_configured(self):
+        dataLabBuilder = DataLabCarBuilder()  # initializing the class
+        car = CarBuilder()
+
+        car.setBuilder(dataLabBuilder)
+        x = car.getCar(self.battery.id, self.wheel.id, self.tire.id)
+        x.setBattery(self.battery)
+        x.setWheel(self.wheel)
+        x.setTire(self.tire)
+
+        self.assertIsNotNone(x.calculate_price())

@@ -10,6 +10,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 
+from app.builder import DataLabCarBuilder, CarBuilder
 from app.forms import OrderForm
 from app.models import *
 
@@ -23,41 +24,39 @@ def configure(request):
     if request.method == "POST":  # If checkout form submitted, parse all fields posted from form here to save order.
         form = OrderForm(request.POST)  # Cast form posted by request to OrderForm.
         if form.is_valid():  # Check form must be valid.
-            try:
-                data = request.POST.dict()  # Get all data filled in our form.
-                fullname = data.get('fullname', None)  # Get fullname field value.
-                battery_id = data.get('battery_id', None)  # Get battery_id field value.
-                wheel_id = data.get('wheel_id', None)  # Get wheel_id field value.
-                tire_id = data.get('tire_id', None)  # Get tire_id field value.
+            # try:
+            data = request.POST.dict()  # Get all data filled in our form.
+            fullname = data.get('fullname', None)  # Get fullname field value.
+            battery_id = data.get('battery_id', None)  # Get battery_id field value.
+            wheel_id = data.get('wheel_id', None)  # Get wheel_id field value.
+            tire_id = data.get('tire_id', None)  # Get tire_id field value.
 
-                battery = Battery.objects.get(id=battery_id)  # Check Battery is exist.
-                wheel = Wheel.objects.get(id=wheel_id)  # Check Wheel is exist.
-                tire = Tire.objects.get(id=tire_id)  # Check Tire is exist.
+            battery = Battery.objects.get(id=battery_id)  # Check Battery is exist.
+            wheel = Wheel.objects.get(id=wheel_id)  # Check Wheel is exist.
+            tire = Tire.objects.get(id=tire_id)  # Check Tire is exist.
 
-                totalAmount, discount = calculate_cost(battery.amount,
-                                                       wheel.amount,
-                                                       tire.amount)  # Calculate all cost of order configuration.
+            totalAmount, discount = get_car(battery, wheel, tire)  # Calculate all cost of order configuration.
 
-                form = form.save(commit=False)  # Disable commit in our form and then pass data manually.
-                form.battery_id = battery.id
-                form.wheel_id = wheel.id
-                form.tier_id = tire.id
-                form.discount = discount
-                form.total_cost = totalAmount
+            form = form.save(commit=False)  # Disable commit in our form and then pass data manually.
+            form.battery_id = battery.id
+            form.wheel_id = wheel.id
+            form.tier_id = tire.id
+            form.discount = discount
+            form.total_cost = totalAmount
 
-                form.save()  # Submit form and save order.
+            form.save()  # Submit form and save order.
 
-                # Sent data to show in receipt of order.
-                return render(request, "app/order.html", {'fullname': fullname,
-                                                          'battery': battery.amount,
-                                                          'wheel': wheel.amount,
-                                                          'tire': tire.amount,
-                                                          'baseAmount': settings.CAR_BASE_PRICE,
-                                                          'totalAmount': totalAmount,
-                                                          'discount': discount,
-                                                          })
-            except Exception as e:
-                print(e)
+            # Sent data to show in receipt of order.
+            return render(request, "app/order.html", {'fullname': fullname,
+                                                      'battery': battery.amount,
+                                                      'wheel': wheel.amount,
+                                                      'tire': tire.amount,
+                                                      'baseAmount': settings.CAR_BASE_PRICE,
+                                                      'totalAmount': totalAmount,
+                                                      'discount': discount,
+                                                      })
+        # except Exception as e:
+        #     print(e)
         else:
             err = form.errors
             return render(request, 'app/order.html', {'form': form, 'error': err})
@@ -82,9 +81,7 @@ def checkout(request, battery_id, wheel_id, tire_id):
         wheel = Wheel.objects.get(id=wheel_id)  # Check wheel is exist.
         tire = Tire.objects.get(id=tire_id)  # Check tire is exist.
 
-        totalAmount, discount = calculate_cost(battery.amount,
-                                               wheel.amount,
-                                               tire.amount)  # Calculate all cost of order configuration.
+        totalAmount, discount = get_car(battery, wheel, tire)  # Calculate all cost of order configuration.
 
         # Sent data to show in last step of order in checkout.
         json_res = [dict(base_amount=str(car_base_price),
@@ -247,18 +244,13 @@ def logout_user(request):
     return HttpResponseRedirect('/login')
 
 
-def calculate_cost(battery_amount, wheel_amount, tire_amount):
-    percentage = lambda part, whole: float(whole) / 100 * float(part)
-    car_base_price = settings.CAR_BASE_PRICE
-    totalAmount = car_base_price + battery_amount + wheel_amount + tire_amount
-    today = datetime.date.today()
-    last_date_of_month = last_friday_of_month(today.year, today.month)
-    if last_date_of_month == today.day:
-        return (percentage(int(settings.LAST_DAY_OF_MONTH_DISCOUNT), totalAmount),
-                float(settings.LAST_DAY_OF_MONTH_DISCOUNT))
-    else:
-        return totalAmount, 0.0
+def get_car(battery, wheel, tire):
+    dataLabBuilder = DataLabCarBuilder()  # initializing the class
+    car = CarBuilder()
 
-
-def last_friday_of_month(year, month):
-    return max(week[calendar.FRIDAY] for week in calendar.monthcalendar(year, month))
+    car.setBuilder(dataLabBuilder)
+    x = car.getCar(battery.id, wheel.id, tire.id)
+    x.setBattery(battery)
+    x.setWheel(wheel)
+    x.setTire(tire)
+    return x.calculate_price()

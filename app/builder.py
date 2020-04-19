@@ -1,3 +1,8 @@
+import calendar
+
+from django.conf import settings
+import datetime
+
 from app.models import Wheel, Tire, Battery
 
 
@@ -7,23 +12,17 @@ class CarBuilder:
     def setBuilder(self, builder):
         self.__builder = builder
 
-    def getCar(self):
+    def getCar(self, battery_id, wheel_id, tire_id):
         car = Car()
 
-        # First goes the body
-        battery = self.__builder.getBattery()
+        battery = self.__builder.getBattery(battery_id)
         car.setBattery(battery)
 
-        # Then engine
-        tire = self.__builder.getTire()
-        car.setTire(tire)
+        wheel = self.__builder.getWheel(wheel_id)
+        car.setWheel(wheel)
 
-        # And four wheels
-        i = 0
-        while i < 4:
-            wheel = self.__builder.getWheel()
-            car.attachWheel(wheel)
-            i += 1
+        tire = self.__builder.getTire(tire_id)
+        car.setTire(tire)
 
         return car
 
@@ -32,62 +31,59 @@ class CarBuilder:
 class Car:
     def __init__(self):
         self.__battery = None
-        self.__wheels = list()
+        self.__wheels = None
         self.__tire = None
 
     def setBattery(self, battery):
         self.__battery = battery
 
-    def attachWheel(self, wheel):
-        self.__wheels.append(wheel)
+    def setWheel(self, wheel):
+        self.__wheels = wheel
 
     def setTire(self, tire):
         self.__tire = tire
 
     def specification(self):
-        print("battery: %s" % self.__battery.name)
-        print("tire: %d" % self.__tire.name)
-        print("wheel: %d\'" % self.__wheels[0].name)
+        return self.__battery.name, self.__wheels.name, self.__tire.name
+
+    def calculate_price(self):
+        percentage = lambda part, whole: float(whole) / 100 * float(part)
+        car_base_price = settings.CAR_BASE_PRICE
+        totalAmount = car_base_price + \
+                      Battery.objects.get(id=self.__battery.id).amount + \
+                      Wheel.objects.get(id=self.__wheels.id).amount + \
+                      Tire.objects.get(id=self.__tire.id).amount
+        today = datetime.date.today()
+        last_date_of_month = self.last_friday_of_month(today.year, today.month)
+        if last_date_of_month == today.day:
+            return (percentage(int(settings.LAST_DAY_OF_MONTH_DISCOUNT), totalAmount),
+                    float(settings.LAST_DAY_OF_MONTH_DISCOUNT))
+        else:
+            return totalAmount, 0.0
+
+    def last_friday_of_month(self, year, month):
+        return max(week[calendar.FRIDAY] for week in calendar.monthcalendar(year, month))
 
 
 class Builder:
-    def getWheel(self): pass
+    def getBattery(self, battery_id):
+        pass
 
-    def getTire(self): pass
+    def getWheel(self, wheel_id):
+        pass
 
-    def getBattery(self): pass
-
-
-class JeepBuilder(Builder):
-    def getBattery(self):
-        battery = Battery()
-        battery.id = 1
-        return battery
-
-    def getWheel(self):
-        wheel = Wheel()
-        wheel.id = 1
-        return wheel
-
-    def getTire(self):
-        tire = Tire()
-        tire.id = 400
-        return tire
+    def getTire(self, tire_id):
+        pass
 
 
+class DataLabCarBuilder(Builder):
+    def getBattery(self, battery_id):
+        return Battery.objects.get(id=battery_id)
 
-def main():
-    jeepBuilder = JeepBuilder()  # initializing the class
+    def getWheel(self, wheel_id):
+        return Wheel.objects.get(id=wheel_id)
 
-    director = CarBuilder()
-
-    # Build Jeep
-    print("Jeep")
-    director.setBuilder(jeepBuilder)
-    jeep = director.getCar()
-    jeep.specification()
-    print("")
+    def getTire(self, tire_id):
+        return Tire.objects.get(id=tire_id)
 
 
-if __name__ == "__main__":
-    main()
