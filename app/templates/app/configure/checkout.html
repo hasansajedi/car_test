@@ -1,0 +1,127 @@
+<div class="alert alert-primary w-100 text-center" role="alert"><h4>Please confirm your checkout form:</h4></div>
+<div class="w-100"></div>
+<div class="row ml-1 mr-1 w-100">
+    <div class="col-sm-8">
+        <div class="card">
+            <div class="card-header">
+                Your selected car configuration:
+            </div>
+            <div class="card-body">
+                <form method="POST" class="post-form" action="{% url 'app:configure' %}">
+                    {% csrf_token %}
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label class="col-form-label">Fullname</label>
+                            <div class="col-sm-12">
+                                {{ form.fullname }}
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label class="col-form-label">Mobile number</label>
+                            <div class="col-sm-12">
+                                {{ form.mobile }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">Email</label>
+                        <div class="col-sm-12">
+                            {{ form.email }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">Address</label>
+                        <div class="col-sm-12">
+                            {{ form.address }}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label class="col-form-label">City</label>
+                            <div class="col-sm-12">
+                                {{ form.city }}
+                            </div>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label class="col-form-label">State</label>
+                            <div class="col-sm-12">
+                                {{ form.state }}
+                            </div>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label class="col-form-label">Zip code</label>
+                            <div class="col-sm-12">
+                                {{ form.zip }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <input type="hidden" id="battery_id" name="battery_id">
+                        <input type="hidden" id="wheel_id" name="wheel_id">
+                        <input type="hidden" id="tire_id" name="tire_id">
+
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                    {% if form.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ form.errors }}
+                        </div>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="card">
+            <div class="card-header">
+                Your selected car configuration:
+            </div>
+            <div class="card-body">
+                <div class="card-text">
+                    <div class="row">
+                        <div class="col">
+                            <h6>Base price: <p class="badge badge-secondary"
+                                               id="basePrice"></p>
+                                €
+                            </h6>
+                        </div>
+                        <div class="w-100"></div>
+                        <div class="col">
+                            <h6>Battery amount: <p class="badge badge-secondary"
+                                                   id="batteryNumber"></p>
+                                €
+                            </h6>
+                        </div>
+                        <div class="w-100"></div>
+                        <div class="col">
+                            <h6>Wheel amount: <p class="badge badge-secondary"
+                                                 id="wheelNumber"></p>
+                                €
+                            </h6>
+                        </div>
+                        <div class="w-100"></div>
+                        <div class="col">
+                            <h6>Tire amount: <p class="badge badge-secondary"
+                                                id="tierNumber"></p>
+                                €
+                            </h6>
+                        </div>
+                        <div class="w-100"></div>
+                        <div class="col">
+                            <h6>Discount: <p class="badge badge-secondary"
+                                             id="discountNumber"></p>
+                                %
+                            </h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent border-success">
+                <h5>Total amount: <p class="badge badge-primary"
+                                     id="totalAmount"></p>
+                    €
+                </h5>
+            </div>
+        </div>
+    </div>
+</div>

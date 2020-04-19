@@ -16,7 +16,8 @@ $(document).ready(function () {
         $('#checkout').hide();
 
         step += 1;
-        content_wheelsForm = "";
+        content_wheelsForm = "<div class=\"alert alert-primary w-100 text-center\" role=\"alert\"><h4>Please select your Wheel type:</h4></div>\n" +
+            "<div class=\"w-100\"></div>\n";
 
         $.ajax({
             url: "/check_available_wheel_for_battery/" + battery,
@@ -37,7 +38,7 @@ $(document).ready(function () {
                     content_wheelsForm += data[x].title
                     content_wheelsForm += "</div>"
                     content_wheelsForm += "</div>"
-                    content_wheelsForm += "<input type=\"button\" class=\"go_step_2 btn btn-primary\" data-id='" + data[x].id + "' value=\"Select\">"
+                    content_wheelsForm += "<input type=\"button\" class=\"go_step_2 btn btn-primary\" data-id='" + data[x].id + "' value=\"Select and continue\">"
                     content_wheelsForm += "</div>"
                     content_wheelsForm += "</div>"
                 }
@@ -63,7 +64,8 @@ $(document).ready(function () {
         $('#checkout').hide();
 
         step += 1
-        content_tiresForm = ""
+        content_tiresForm = "<div class=\"alert alert-primary w-100 text-center\" role=\"alert\"><h4>Please select your Tire type:</h4></div>\n" +
+            "<div class=\"w-100\"></div>\n"
 
         $.ajax({
             url: '/check_available_tire_for_wheel/' + wheel,
@@ -84,7 +86,7 @@ $(document).ready(function () {
                     content_tiresForm += data[x].title
                     content_tiresForm += "</div>"
                     content_tiresForm += "</div>"
-                    content_tiresForm += "<input type=\"button\" class=\"go_step_3 btn btn-primary\" data-id='" + data[x].id + "' value=\"Select\">"
+                    content_tiresForm += "<input type=\"button\" class=\"go_step_3 btn btn-primary\" data-id='" + data[x].id + "' value=\"Select and continue\">"
                     content_tiresForm += "</div>"
                     content_tiresForm += "</div>"
                 }
@@ -110,7 +112,6 @@ $(document).ready(function () {
         $('#tire_id').val(tire)
 
         step += 1
-        content_tiresForm = ""
 
         $.ajax({
             url: '/checkout/' + battery + '/' + wheel + '/' + tire,

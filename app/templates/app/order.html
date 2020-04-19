@@ -9,209 +9,23 @@
     {% endif %}
 
     {% if baseAmount is not None %}
-        <div class="alert alert-success" role="alert">Your order has been submitted successfully.</div>
-        <div class="row d-flex justify-content-center">
-            <div class="col-sm-8">
-                <div class="card">
-                    <div class="card-header">
-                        Your selected car configuration:
-                    </div>
-                    <div class="card-body">
-                        <div class="card-text">
-                            <div class="row">
-                                <div class="col">
-                                    <h5>Full name: <p class="badge badge-secondary">{{ fullname }}</p></h5>
-                                </div>
-                                <div class="w-100"></div>
-                                <div class="col">
-                                    <h5>Base price: <p class="badge badge-secondary">{{ baseAmount }} €</p></h5>
-                                </div>
-                                <div class="w-100"></div>
-                                <div class="col">
-                                    <h5>Battery amount: <p class="badge badge-secondary">{{ battery }} €</p></h5>
-                                </div>
-                                <div class="w-100"></div>
-                                <div class="col">
-                                    <h5>Wheel amount: <p class="badge badge-secondary">{{ wheel }} €</p></h5>
-                                </div>
-                                <div class="w-100"></div>
-                                <div class="col">
-                                    <h5>Tire amount: <p class="badge badge-secondary">{{ tire }} €</p></h5>
-                                </div>
-                                <div class="w-100"></div>
-                                <div class="col">
-                                    <h5>Discount: <p class="badge badge-secondary">{{ discount }} %</p></h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-footer bg-transparent border-success text-center">
-                        <h4>Total amount: <p class="badge badge-primary">{{ totalAmount }} €</p></h4>
-                    </div>
-                </div>
-            </div>
-        </div>
+        {% include "app/configure/receipt.html" %}
     {% else %}
         <div class="row">
             <div class="col-sm-12">
                 <div class="card">
-                    {% block sub_content %}
-                        <div class="form-group row m-2" id="batteriesForm">
-                            {% for item in battery %}
-                                <div class="col-sm-4">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            {{ item.name }}
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="card-text">
-                                                {{ item }}
-                                            </div>
-                                        </div>
-                                        <input type="button" class="go_step_1 btn btn-primary" data-id="{{ item.id }}"
-                                               data-amount="{{ item.amount }}" value="Select
-                                    and continue">
-                                    </div>
-                                </div>
-                            {% endfor %}
-                        </div>
+                    <div class="form-group row m-2" id="batteriesForm">
+                        {% include "app/configure/load_batteries.html" %}
+                    </div>
 
-                        <div class="form-group row m-2" id="wheelsForm">
+                    <div class="form-group row m-2" id="wheelsForm">
+                    </div>
 
-                        </div>
-
-                        <div class="form-group row m-2" id="tiresForm">
-
-                        </div>
-                        <div class="row m-2" id="checkout">
-                            <div class="w-100"></div>
-                            <div class="row ml-1 mr-1 w-100">
-                                <div class="col-sm-8">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            Your selected car configuration:
-                                        </div>
-                                        <div class="card-body">
-                                            <form method="POST" class="post-form" action="{% url 'app:configure' %}">
-                                                {% csrf_token %}
-                                                <div class="form-row">
-                                                    <div class="form-group col-md-6">
-                                                        <label class="col-form-label">Fullname</label>
-                                                        <div class="col-sm-12">
-                                                            {{ form.fullname }}
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group col-md-6">
-                                                        <label class="col-form-label">Mobile number</label>
-                                                        <div class="col-sm-12">
-                                                            {{ form.mobile }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label class="col-form-label">Email</label>
-                                                    <div class="col-sm-12">
-                                                        {{ form.email }}
-                                                    </div>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label class="col-form-label">Address</label>
-                                                    <div class="col-sm-12">
-                                                        {{ form.address }}
-                                                    </div>
-                                                </div>
-                                                <div class="form-row">
-                                                    <div class="form-group col-md-6">
-                                                        <label class="col-form-label">City</label>
-                                                        <div class="col-sm-12">
-                                                            {{ form.city }}
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group col-md-4">
-                                                        <label class="col-form-label">State</label>
-                                                        <div class="col-sm-12">
-                                                            {{ form.state }}
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group col-md-2">
-                                                        <label class="col-form-label">Zip code</label>
-                                                        <div class="col-sm-12">
-                                                            {{ form.zip }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group row">
-                                                    <input type="hidden" id="battery_id" name="battery_id">
-                                                    <input type="hidden" id="wheel_id" name="wheel_id">
-                                                    <input type="hidden" id="tire_id" name="tire_id">
-
-                                                    <button type="submit" class="btn btn-primary">Submit</button>
-                                                </div>
-                                                {% if form.errors %}
-                                                    <div class="alert alert-danger" role="alert">
-                                                        {{ form.errors }}
-                                                    </div>
-                                                {% endif %}
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm-4">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            Your selected car configuration:
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="card-text">
-                                                <div class="row">
-                                                    <div class="col">
-                                                        <h6>Base price: <p class="badge badge-secondary"
-                                                                           id="basePrice"></p>
-                                                            €
-                                                        </h6>
-                                                    </div>
-                                                    <div class="w-100"></div>
-                                                    <div class="col">
-                                                        <h6>Battery amount: <p class="badge badge-secondary"
-                                                                               id="batteryNumber"></p>
-                                                            €
-                                                        </h6>
-                                                    </div>
-                                                    <div class="w-100"></div>
-                                                    <div class="col">
-                                                        <h6>Wheel amount: <p class="badge badge-secondary"
-                                                                             id="wheelNumber"></p>
-                                                            €
-                                                        </h6>
-                                                    </div>
-                                                    <div class="w-100"></div>
-                                                    <div class="col">
-                                                        <h6>Tire amount: <p class="badge badge-secondary"
-                                                                            id="tierNumber"></p>
-                                                            €
-                                                        </h6>
-                                                    </div>
-                                                    <div class="w-100"></div>
-                                                    <div class="col">
-                                                        <h6>Discount: <p class="badge badge-secondary"
-                                                                         id="discountNumber"></p>
-                                                            %
-                                                        </h6>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="card-footer bg-transparent border-success">
-                                            <h5>Total amount: <p class="badge badge-primary"
-                                                                 id="totalAmount"></p>
-                                                €
-                                            </h5>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    {% endblock %}
+                    <div class="form-group row m-2" id="tiresForm">
+                    </div>
+                    <div class="row m-2" id="checkout">
+                        {% include "app/configure/checkout.html" %}
+                    </div>
                 </div>
             </div>
         </div>

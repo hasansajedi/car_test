@@ -1,0 +1,42 @@
+<div class="alert alert-success w-100 text-center" role="alert">Your order has been submitted successfully.</div>
+<div class="row d-flex justify-content-center">
+    <div class="col-sm-8">
+        <div class="card">
+            <div class="card-header">
+                Your selected car configuration:
+            </div>
+            <div class="card-body">
+                <div class="card-text">
+                    <div class="row">
+                        <div class="col">
+                            <h5>Full name: <p class="badge badge-secondary">{{ fullname }}</p></h5>
+                        </div>
+                        <div class="w-100"></div>
+                        <div class="col">
+                            <h5>Base price: <p class="badge badge-secondary">{{ baseAmount }} €</p></h5>
+                        </div>
+                        <div class="w-100"></div>
+                        <div class="col">
+                            <h5>Battery amount: <p class="badge badge-secondary">{{ battery }} €</p></h5>
+                        </div>
+                        <div class="w-100"></div>
+                        <div class="col">
+                            <h5>Wheel amount: <p class="badge badge-secondary">{{ wheel }} €</p></h5>
+                        </div>
+                        <div class="w-100"></div>
+                        <div class="col">
+                            <h5>Tire amount: <p class="badge badge-secondary">{{ tire }} €</p></h5>
+                        </div>
+                        <div class="w-100"></div>
+                        <div class="col">
+                            <h5>Discount: <p class="badge badge-secondary">{{ discount }} %</p></h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent border-success text-center">
+                <h4>Total amount: <p class="badge badge-primary">{{ totalAmount }} €</p></h4>
+            </div>
+        </div>
+    </div>
+</div>

@@ -2,10 +2,9 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import AbstractUser
 
-import arrow
-
 from phonenumber_field.modelfields import PhoneNumberField
 from shortuuidfield import ShortUUIDField
+import arrow
 
 
 # Create your models here.

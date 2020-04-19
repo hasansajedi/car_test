@@ -1,0 +1,19 @@
+<div class="alert alert-primary w-100 text-center" role="alert"><h4>Please select your Battery type:</h4></div>
+<div class="w-100"></div>
+{% for item in battery %}
+    <div class="col-sm-4">
+        <div class="card">
+            <div class="card-header">
+                {{ item.name }}
+            </div>
+            <div class="card-body">
+                <div class="card-text">
+                    {{ item }}
+                </div>
+            </div>
+            <input type="button" class="go_step_1 btn btn-primary" data-id="{{ item.id }}"
+                   data-amount="{{ item.amount }}" value="Select
+                                    and continue">
+        </div>
+    </div>
+{% endfor %}
